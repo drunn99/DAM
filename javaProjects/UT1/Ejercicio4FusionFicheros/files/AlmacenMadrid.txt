@@ -1,0 +1,16 @@
+1;Minecraft;29.99
+4;Super Mario Odyssey;49.99
+7;Animal Crossing;49.99
+10;Hogwarts Legacy;49.99
+13;Resident Evil 4;39.99
+16;Cyberpunk 2077;59.99
+19;Gran Turismo 7;69.99
+22;Fortnite;0.00
+2;FIFA 26;69.99
+3;The Legend of Zelda;59.99
+5;God of War Ragnarök;59.99
+8;Red Dead Redemption 2;39.99
+11;Mario Kart 8 Deluxe;49.99
+14;The Sims 4;0.00
+17;Assassin's Creed Shadows;69.99
+20;Hogwarts Legacy;49.99

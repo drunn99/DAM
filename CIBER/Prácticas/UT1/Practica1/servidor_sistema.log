@@ -1,0 +1,8 @@
+# Extracto del registro del sistema  ·  SRV-FICHEROS (192.168.56.10)  ·  Debian 13
+# Ventana: 2027-01-14  02:39 – 02:56
+2027-01-14T02:39:21 systemd[1]: clamav-daemon.service: Deactivated successfully.
+2027-01-14T02:43:11 audit: proceso 'kworker-9x' iniciado desde /tmp/.cache/ (uid=0)
+2027-01-14T02:43:12 monitor: uso de CPU sostenido del 97 % durante 11 min (proceso kworker-9x)
+2027-01-14T02:50:01 CRON[3120]: (svc_update) CMD (/tmp/.cache/beacon >/dev/null 2>&1)   # tarea nueva, se ejecuta cada 5 min
+2027-01-14T02:54:02 monitor: 3.412 archivos modificados en /home y /srv/nominas en 40 s (nueva extensión .lockx)
+2027-01-14T02:55:00 monitor: creado el fichero /srv/nominas/LEEME_RESCATE.txt

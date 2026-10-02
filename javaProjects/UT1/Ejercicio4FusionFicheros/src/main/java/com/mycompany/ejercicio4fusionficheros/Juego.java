@@ -11,12 +11,28 @@ package com.mycompany.ejercicio4fusionficheros;
 public class Juego {
     int id;
     String titulo;
-    String genero;
+    float precio;
     
-    Juego(int id, String titulo, String genero){
+    Juego(int id, String titulo, float precio){
         this.id = id;
         this.titulo = titulo;
-        this.genero = genero;
+        this.precio = precio;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Juego)) return false;
+        return id == ((Juego) o).id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
+    
+    public String joinData() {
+    	return String.join(";",String.valueOf(id),titulo,String.valueOf(precio));
     }
     
     

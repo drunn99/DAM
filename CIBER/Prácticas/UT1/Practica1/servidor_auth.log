@@ -1,0 +1,16 @@
+# Extracto del registro de autenticación (journalctl -u ssh / sudo)  ·  SRV-FICHEROS (192.168.56.10)  ·  Debian 13
+# Ventana: 2027-01-14  02:30 – 02:42  (horario nocturno, sin personal en la oficina)
+2027-01-14T02:31:02 sshd[2041]: Failed password for root from 203.0.113.47 port 51022 ssh2
+2027-01-14T02:31:03 sshd[2041]: Failed password for root from 203.0.113.47 port 51023 ssh2
+2027-01-14T02:31:04 sshd[2042]: Failed password for root from 203.0.113.47 port 51024 ssh2
+2027-01-14T02:31:05 sshd[2042]: Failed password for admin from 203.0.113.47 port 51025 ssh2
+2027-01-14T02:31:06 sshd[2043]: Failed password for admin from 203.0.113.47 port 51026 ssh2
+2027-01-14T02:31:07 sshd[2043]: Failed password for invalid user test from 203.0.113.47 port 51027 ssh2
+2027-01-14T02:31:08 sshd[2044]: Failed password for invalid user oracle from 203.0.113.47 port 51028 ssh2
+# ... (patrón repetido: 1.184 intentos fallidos en 6 minutos sobre nombres de usuario comunes)
+2027-01-14T02:37:41 sshd[2290]: Accepted password for admin from 203.0.113.47 port 52011 ssh2
+2027-01-14T02:37:41 sshd[2290]: pam_unix(sshd:session): session opened for user admin(uid=1001) by admin(uid=0)
+2027-01-14T02:38:55 sudo[2301]:    admin : PWD=/home/admin ; USER=root ; COMMAND=/usr/sbin/useradd -m -s /bin/bash svc_update
+2027-01-14T02:38:56 sudo[2305]:    admin : PWD=/home/admin ; USER=root ; COMMAND=/usr/sbin/usermod -aG sudo svc_update
+2027-01-14T02:39:20 sudo[2311]:    admin : PWD=/home/admin ; USER=root ; COMMAND=/usr/bin/systemctl disable --now clamav-daemon
+2027-01-14T02:41:10 sshd[2290]: pam_unix(sshd:session): session closed for user admin
