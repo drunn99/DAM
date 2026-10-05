@@ -1,0 +1,8 @@
+Be responsive:
+
+Responsive: Diseño capaz de adaptarse al dispositivos, el contenido no cambia, solo se mueve.
+Se suele realizar apilando contenidos de izquierda a derecha según se estreche la pantalla.
+Las ventajas son: Un único diseño, mayor repercusión, más dispositivos.
+Las claves son: Abandonar anchos fijos y usar proporciones.
+Los detalles son: No usar imágenes grandes, aprovechar los dispositivos y sus flows de navegación propios y procurar la navegación ágil, simplificando y dejando los contenidos a la mano del usuario.
+
