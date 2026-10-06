@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.cifpsantacatalina.miprimeraapp"
-        minSdk = 24
+        minSdk = 36
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
