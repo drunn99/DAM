@@ -1,15 +1,41 @@
 // ---------- Completa las funciones ----------
-fun precioConIva(precioBase: Double, iva: Double = 0.21): Double = TODO()
+fun precioConIva(precioBase: Double, iva: Double = 0.21): Double = precioBase * (1 + iva)
 
-fun calificacion(nota: Double): String = TODO()
+fun calificacion(nota: Double): String {
+    return when {
+        nota < 0.0 || nota > 10.0 -> "Nota no válida"
+        nota < 5.0 -> "Suspenso"
+        5.0 - nota == 0.0 -> "Aprobado"
+        nota < 7.0 -> "Bien"
+        nota < 9.0 -> "Notable"
+        else -> "Sobresaliente"
+    }
+}
 
-fun esBisiesto(anio: Int): Boolean = TODO()
+fun esBisiesto(anio: Int): Boolean = (anio % 4 == 0 && anio % 100 != 0) || anio % 400 == 0;
 
-fun fizzBuzz(n: Int): String = TODO()
+fun fizzBuzz(n: Int): String = if(n % 15 == 0) return "FizzBuzz" else if (n % 5 == 0) return "Buzz" else if (n % 3 == 0) return "Fizz" else return n.toString()
 
-fun Int.esPrimo(): Boolean = TODO()
+fun Int.esPrimo(): Boolean {
+    for (i in 2 until this) {
+        if (this % i == 0) return false
+    }
+    
+    return if (this == 1) false else true
+}
 
-fun String.contarVocales(): Int = TODO()
+fun String.contarVocales(): Int {
+    val vocales = arrayOf('a','e','i','o','u')
+    var count: Int = 0
+    
+    for(char in this) {
+		if(vocales.contains(char.lowercaseChar())){
+            count++
+        }
+    }
+    
+    return count
+}
 
 // ---------- Comprobaciones (no modificar) ----------
 fun main() {
@@ -48,3 +74,4 @@ fun comprobar(prueba: String, esperado: Any?, obtenido: () -> Any?) {
         println("PENDIENTE  $prueba")
     }
 }
+

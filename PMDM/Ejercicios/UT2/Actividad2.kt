@@ -32,7 +32,7 @@ fun main() {
         hora in 6..13 -> "Buenos días"
         hora in 14..20 -> "Buenas tardes"
         hora in 0..5 || hora in 21..24 -> "Buenas noches"
-        else -> ""
+        else -> "Formato de Hora incorrecto, no te saludo :("
     }
     
     println(saludo)
