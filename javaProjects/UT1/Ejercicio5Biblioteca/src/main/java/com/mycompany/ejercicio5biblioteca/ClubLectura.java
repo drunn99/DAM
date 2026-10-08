@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,8 +34,9 @@ public class ClubLectura {
     private File ficheroPrestamos;
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
-    public ClubLectura() {
+    public ClubLectura(File ficheroPrestamos) {
         this.prestamos = new ArrayList<Prestamo>();
+        this.ficheroPrestamos = ficheroPrestamos;
     }
     // </editor-fold>
 
@@ -57,18 +59,13 @@ public class ClubLectura {
         this.prestamos = prestamos;
     }
 
-    public void setPrestamosSet(Set<Prestamo> prestamosSet) {
-        this.prestamosSet = prestamosSet;
-    }
-
     public void setFicheroPrestamos(File ficheroPrestamos) {
         this.ficheroPrestamos = ficheroPrestamos;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Methods">
-    public int setPrestamos(File ficheroPrestamos) {
-        this.ficheroPrestamos = ficheroPrestamos;
+    public int setPrestamos() {
         try (BufferedReader br = new BufferedReader(new FileReader(ficheroPrestamos, StandardCharsets.UTF_8))) {
             String nextLine = "";
 
@@ -99,7 +96,7 @@ public class ClubLectura {
         Object[] arrayParametros = new Object[3];
         arrayParametros[0] = new Miembro(Integer.parseInt(prestamoSplitData[0]), prestamoSplitData[1], prestamoSplitData[2], prestamoSplitData[3], prestamoSplitData[4]);
         arrayParametros[1] = new Libro(prestamoSplitData[5], prestamoSplitData[6], prestamoSplitData[7]);
-        arrayParametros[2] = LocalDate.of(dateNumbers[2], dateNumbers[1], dateNumbers[0]);
+        arrayParametros[2] = LocalDate.of(dateNumbers[0], dateNumbers[1], dateNumbers[2]);
 
         return arrayParametros;
     }
@@ -107,7 +104,7 @@ public class ClubLectura {
     public ArrayList<Prestamo> getPrestamoEditorial(String editorial) {
         ArrayList<Prestamo> filteredList = new ArrayList<Prestamo>();
         for (Prestamo prestamo : prestamos) {
-            if (prestamo.getLibroPrestado().getEditorial() == editorial) {
+            if (prestamo.getLibroPrestado().getEditorial().equalsIgnoreCase(editorial)) {
                 filteredList.add(prestamo);
             }
         }
@@ -115,12 +112,20 @@ public class ClubLectura {
         return filteredList;
     }
 
-    public int nuevoPrestamo() {
+    public int nuevoPrestamo() throws IOException {
         Prestamo newPrestamo = pedirPrestamo();
-        
-        if (prestamosSet.add(newPrestamo)) {
-            prestamos.add(newPrestamo);
-            return 1;
+        if (newPrestamo != null) {
+	        if (prestamosSet.add(newPrestamo)) {
+	        	//Añadirlo a prestamos
+	            prestamos.add(newPrestamo);
+	            
+	            //Añadirlo al archivo de prestamos
+	           try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroPrestamos, true))) {
+	        	   bw.append("\n" + newPrestamo.toString());
+	           }
+	            
+	            return 1;
+	        }
         }
         return 0;
     }
@@ -144,16 +149,16 @@ public class ClubLectura {
                 devoluciones.add(prestamo);
             }
         }
+        
         //Escribir en fichero devolcuiones
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(".\\files\\devolucion.txt"))) {
             for (Prestamo devolucion : devoluciones) {
-                bw.write(devolucion.toString() + "\n");
+                bw.append(devolucion.toString() + "\n");
             }
 
         } catch (IOException ex) {
 
         }
-        //Devolver lista de devoluciones
 
         return devolucionesFile;
     }
@@ -183,7 +188,7 @@ public class ClubLectura {
         panel.add(txtAutor);
         panel.add(new JLabel("Editorial:"));
         panel.add(txtEditorial);
-        panel.add(new JLabel("Fecha préstamo (aaaa-mm-dd):"));
+        panel.add(new JLabel("Fecha préstamo (aaaa/mm/dd):"));
         panel.add(txtFecha);
 
         while (true) {
@@ -191,12 +196,13 @@ public class ClubLectura {
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
             if (opcion != JOptionPane.OK_OPTION) {
-                return null;   // canceló o cerró la ventana
+                return null;
             }
 
             try {
-                LocalDate fecha = LocalDate.parse(txtFecha.getText().trim());
-                
+            	final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+            	LocalDate fecha = LocalDate.parse(txtFecha.getText().trim(), FORMATO_FECHA);
+            	
                 int maxId = 0;
                 for (Prestamo p : prestamos) {
                     if (p.getMiembro().getId() > maxId) {
@@ -221,6 +227,48 @@ public class ClubLectura {
                 JOptionPane.showMessageDialog(null, "Error en la creación del préstamo", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+    
+    public int cargarDemo() throws IOException {
+        prestamos.clear();
+        prestamosSet.clear();
+        final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
+        ArrayList<Prestamo> demo = new ArrayList<Prestamo>();
+        
+        demo.add(new Prestamo(new Libro("El nombre del viento", "Patrick Rothfuss", "Anagrama"),
+                new Miembro(101, "Carlos López Díaz", "carlos.lopez@gmail.com", "555123456", "Madrid"),
+                LocalDate.of(2019, 9, 28)));
+        
+        demo.add(new Prestamo(new Libro("Cien años de soledad", "Gabriel García Márquez", "Sudamericana"),
+                new Miembro(102, "Ana Martín Pérez", "ana.martin@newsvine.com", "555654321", "Barcelona"),
+                LocalDate.of(2018, 3, 6)));
+        
+        demo.add(new Prestamo(new Libro("1984", "George Orwell", "Secker & Warburg"),
+                new Miembro(103, "Luis Gómez Fernández", "luis.gomez@gmail.com", "555987654", "Valencia"),
+                LocalDate.of(2017, 12, 6)));
+        
+        demo.add(new Prestamo(new Libro("Orgullo y prejuicio", "Jane Austen", "T. Egerton"),
+                new Miembro(104, "Marta Sánchez Ruiz", "marta.sanchez@webs.com", "555456789", "Sevilla"),
+                LocalDate.of(2020, 11, 29)));
+        
+        demo.add(new Prestamo(new Libro("Don Quijote de la Mancha", "Miguel de Cervantes", "Francisco de Robles"),
+                new Miembro(105, "Javier Torres López", "javier.torres@gmail.com", "555321987", "Zaragoza"),
+                LocalDate.of(2012, 3, 29)));
+
+        for (Prestamo p : demo) {
+            if (prestamosSet.add(p)) {
+                prestamos.add(p);
+            }
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroPrestamos))) {
+            for (int i = 0; i < prestamos.size(); i++) {
+                if (i > 0) bw.newLine();
+                bw.write(prestamos.get(i).toString());
+            }
+        }
+        return prestamos.size();
     }
     // </editor-fold>
 }

@@ -5,6 +5,7 @@
 package com.mycompany.ejercicio5biblioteca;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -54,7 +55,9 @@ public class Prestamo {
 
     @Override
     public String toString() {
-        return miembro.toString() + libroPrestado.toString() + fechaPrestamo.toString();
+    	final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
+        return miembro.toString() + libroPrestado.toString() + fechaPrestamo.format(FORMATO_FECHA);
     }
     
 }
