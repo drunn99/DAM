@@ -17,7 +17,7 @@ fun esBisiesto(anio: Int): Boolean = (anio % 4 == 0 && anio % 100 != 0) || anio 
 fun fizzBuzz(n: Int): String = if(n % 15 == 0) return "FizzBuzz" else if (n % 5 == 0) return "Buzz" else if (n % 3 == 0) return "Fizz" else return n.toString()
 
 fun Int.esPrimo(): Boolean {
-    for (i in 2 until this) {
+    for (i in 2 until this/2) {
         if (this % i == 0) return false
     }
     

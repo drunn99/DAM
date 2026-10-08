@@ -52,7 +52,7 @@ public class Libro {
 
     @Override
     public String toString() {
-        return "Libro{" + "titulo=" + titulo + ", autor=" + autor + ", editorial=" + editorial + '}';
+        return String.format("%s;%s;%s;",this.titulo,this.autor,this.editorial);
     }
         
 }

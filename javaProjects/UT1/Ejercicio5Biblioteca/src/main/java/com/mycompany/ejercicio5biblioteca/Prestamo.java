@@ -54,7 +54,7 @@ public class Prestamo {
 
     @Override
     public String toString() {
-        return "Prestamo{" + "libroPrestado=" + libroPrestado.toString() + ", miembro=" + miembro.toString() + ", fechaPrestamo=" + fechaPrestamo.toString() + '}';
+        return miembro.toString() + libroPrestado.toString() + fechaPrestamo.toString();
     }
     
 }

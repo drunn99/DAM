@@ -1,13 +1,41 @@
 // ---------- Completa las funciones ----------
-fun operar(a: Int, b: Int, operacion: (Int, Int) -> Int): Int = TODO()
+fun operar(a: Int, b: Int, operacion: (Int, Int) -> Int): Int = operacion(a,b)
 
-fun aplicarNVeces(n: Int, valorInicial: Int, f: (Int) -> Int): Int = TODO()
+fun aplicarNVeces(n: Int, valorInicial: Int, f: (Int) -> Int): Int  {
+    var valorActual = valorInicial 
+    for(i in 0 until n){
+        valorActual = f(valorActual)
+    } 
+    return valorActual
+}
 
-fun crearMultiplicador(factor: Int): (Int) -> Int = TODO()
+fun crearMultiplicador(factor: Int): (Int) -> Int =  { it * factor}
 
-fun contarQueCumplen(rango: IntRange, condicion: (Int) -> Boolean): Int = TODO()
+fun contarQueCumplen(rango: IntRange, condicion: (Int) -> Boolean): Int {
+    var count: Int = 0
+    for (i in rango) {
+        if (condicion(i))
+        	count++
+    }
+    return count
+}
 
-fun fichaApp(nombre: String, version: String): String = TODO()
+fun fichaApp(nombre: String, version: String): String {
+    return StringBuilder().apply {
+        append("App: ")
+        append(nombre)
+        append(" | Versión: ")
+        append(version)
+    }.toString()
+}
+
+fun potencia(n: Int, potencia: Int): Int { 
+    var res: Int = n
+    repeat(potencia-1) {
+        res*=n
+    }
+	return res
+}
 
 // ---------- Comprobaciones (no modificar) ----------
 fun main() {
@@ -21,6 +49,7 @@ fun main() {
     comprobar("fichaApp", "App: Strava | Versión: 2.4") {
         fichaApp("Strava", "2.4")
     }
+    comprobar("potencia(2,10)", 1024) {potencia(2,10)}
 }
 
 // ---------- Función de comprobación (no modificar) ----------

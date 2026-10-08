@@ -74,7 +74,7 @@ public class Miembro {
     
     @Override
     public String toString() {
-        return "Miembro{" + "id=" + id + ", nombre=" + nombre + ", email=" + email + ", telefono=" + telefono + ", ciudad=" + ciudad + '}';
+        return String.format("%d;%s;%s;%s;%s;",this.id,this.nombre,this.email,this.telefono,this.ciudad);
     }
     
 }

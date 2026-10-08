@@ -1,13 +1,13 @@
 // ---------- Completa las funciones (sin usar !!) ----------
-fun longitud(texto: String?): Int = TODO()
+fun longitud(texto: String?): Int = texto?.length ?: 0
 
-fun saludo(nombre: String?): String = TODO()
+fun saludo(nombre: String?): String = if (nombre != null && nombre.trim().length != 0) "Hola, $nombre" else "Hola, invitado"
 
-fun parsearEdad(texto: String): Int? = TODO()
+fun parsearEdad(texto: String): Int? = texto.toIntOrNull()?.let { if (it in 1..100) return it else return null}
 
-fun primeraLetra(texto: String?): Char? = TODO()
+fun primeraLetra(texto: String?): Char? = texto?.firstOrNull()?.uppercaseChar()
 
-fun sumaSegura(a: String?, b: String?): Int = TODO()
+fun sumaSegura(a: String?, b: String?): Int = (a?.toIntOrNull() ?: 0) + (b?.toIntOrNull() ?: 0)
 
 // ---------- Comprobaciones (no modificar) ----------
 fun main() {
