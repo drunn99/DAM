@@ -3,16 +3,33 @@ class PlanDatos(val operador: String, val gigasTotales: Double) {
 
     var gigasConsumidos: Double = 0.0
         private set
+    
+     /*
+     * 
+     * gigasConsumidos es private set para evitar
+     * que se pueda modificar desde fuera de su propia clase;
+     * lo que abriría la puerta a exploits donde el usuario modifique
+     * sus propios gigas consumidos.
+     * 
+     * */
 
     init {
-        // TODO: valida con require que gigasTotales sea mayor que 0
+        require(gigasTotales > 0) {"Los gigas totales han de ser mayor que 0"}
     }
 
-    fun consumir(gigas: Double): Boolean = TODO()
+    fun consumir(gigas: Double): Boolean {
+        if(gigasConsumidos + gigas <= gigasTotales) {
+            gigasConsumidos+= gigas
+            return true
+        } else {
+            return false
+        }
+    }
 
-    fun restantes(): Double = TODO()
+    fun restantes(): Double = gigasTotales - gigasConsumidos
 
-    fun porcentajeUso(): Int = TODO()
+    fun porcentajeUso(): Int = ((gigasConsumidos / gigasTotales) * 100).toInt()
+    
 }
 
 data class Contacto(
@@ -21,9 +38,11 @@ data class Contacto(
     val favorito: Boolean = false
 )
 
-fun marcarFavorito(contacto: Contacto): Contacto = TODO()
+fun marcarFavorito(contacto: Contacto): Contacto = contacto.copy(favorito = true)
 
-fun nombresFavoritos(contactos: List<Contacto>): List<String> = TODO()
+fun nombresFavoritos(contactos: List<Contacto>): List<String> = contactos.filter{it.favorito}.map{it.nombre}.sorted()
+
+
 
 // ---------- Comprobaciones (no modificar) ----------
 fun main() {

@@ -1,17 +1,17 @@
 // ---------- Completa las funciones (sin bucles for) ----------
-fun empiezanPor(letra: Char, apps: List<String>): List<String> = TODO()
+fun empiezanPor(letra: Char, apps: List<String>): List<String> = apps.filter{it.first() == letra}
 
-fun longitudes(apps: List<String>): List<Int> = TODO()
+fun longitudes(apps: List<String>): List<Int> = apps.map {it.length}
 
-fun totalDescargas(descargas: Map<String, Int>): Int = TODO()
+fun totalDescargas(descargas: Map<String, Int>): Int = descargas.values.sum()
 
-fun masDescargada(descargas: Map<String, Int>): String? = TODO()
+fun masDescargada(descargas: Map<String, Int>): String? = descargas.maxByOrNull{ it.value }?.key
 
-fun conAlMenos(descargas: Map<String, Int>, minimo: Int): List<String> = TODO()
+fun conAlMenos(descargas: Map<String, Int>, minimo: Int): List<String> = descargas.filter{it.value >= minimo}.keys.sorted()
 
-fun agruparPorInicial(apps: List<String>): Map<Char, List<String>> = TODO()
+fun agruparPorInicial(apps: List<String>): Map<Char, List<String>> = apps.groupBy { it.first() }
 
-fun resumen(apps: List<String>, n: Int): String = TODO()
+fun resumen(apps: List<String>, n: Int): String = apps.take(n).joinToString().uppercase()
 
 // ---------- Comprobaciones (no modificar) ----------
 fun main() {

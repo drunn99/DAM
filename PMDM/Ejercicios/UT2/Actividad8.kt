@@ -19,7 +19,7 @@ sealed interface Evento {
 // ---------- Completa ----------
 class TareaSimple(titulo: String, prioridad: Prioridad, val minutos: Int) :
     Tarea(titulo, prioridad) {
-    override fun minutosEstimados(): Int = TODO()
+    override fun minutosEstimados(): Int = minutos
 }
 
 class TareaCompuesta(
@@ -28,7 +28,7 @@ class TareaCompuesta(
     val subtareas: List<Tarea>
 ) :
     Tarea(titulo, prioridad) {
-    override fun minutosEstimados(): Int = TODO()
+    override fun minutosEstimados(): Int = subtareas.map{it.minutos}.sum()
     override fun describir(): String = TODO()
 }
 
