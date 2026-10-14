@@ -18,10 +18,17 @@ suspend fun descargarAvisos(): Int {
 
 fun main() = runBlocking {
     val tiempo = measureTimeMillis {
-        val noticias = descargarNoticias()
-        val prevision = descargarTiempo()
-        val avisos = descargarAvisos()
-        println("${noticias.size} noticias | $prevision | $avisos avisos")
+        val noticias = async { descargarNoticias() }
+        val prevision = async { descargarTiempo() }
+        val avisos = async { descargarAvisos() }
+        println("${noticias.await().size} noticias | ${prevision.await()} | ${avisos.await()} avisos")
     }
     println("Tiempo total: $tiempo ms")
 }
+
+/*
+ * Antes de async tardará: 2,5s aprox.
+ * Después de async tardará: 1,2s aprox
+ * */
+
+

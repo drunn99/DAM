@@ -1,5 +1,10 @@
 // ---------- Ya está hecho ----------
-enum class Prioridad { BAJA, MEDIA, ALTA }
+enum class Prioridad { BAJA, MEDIA, ALTA, CRITICA }
+/*
+ * Al añadir CRITICA al enumerado, no pasa nada al compilar
+ * pero es un error que surgirá a posteriori si hacemos un when sobre
+ * prioridad, ya que deben ser exhaustivos.
+ * */
 
 interface Describible {
     fun describir(): String
@@ -12,9 +17,17 @@ abstract class Tarea(val titulo: String, val prioridad: Prioridad) : Describible
 
 sealed interface Evento {
     data class Creada(val titulo: String) : Evento
-    data class Completada(val titulo: String, val minutosReales: Int) : Evento
+    //data class EnCurso(val titulo: String, val minutosReales: Int) : Evento	
+    data class Completada(val titulo: String, val minutosReales: Int) : Evento	
     object ListaVaciada : Evento
 }
+
+/*
+ * Al añadir un nuevo tipo de evento, si no modificamos mensaje() que hace un when sobre
+ * los valores de Evento, como este es sealed, se conocen todas sus subclases y por lo tanto
+ * nos aparecerá un error de que el when debe ser exhaustivo y agotar todas las opciones.
+ * Añadiendo "EnCurso": ERROR - 'when' expression must be exhaustive. Add the 'is EnCurso' branch or an 'else' branch.
+ * */
 
 // ---------- Completa ----------
 class TareaSimple(titulo: String, prioridad: Prioridad, val minutos: Int) :
@@ -28,13 +41,17 @@ class TareaCompuesta(
     val subtareas: List<Tarea>
 ) :
     Tarea(titulo, prioridad) {
-    override fun minutosEstimados(): Int = subtareas.map{it.minutos}.sum()
-    override fun describir(): String = TODO()
+    override fun minutosEstimados(): Int = subtareas.sumOf { it.minutosEstimados() }
+    override fun describir(): String = "[$prioridad] $titulo (${minutosEstimados()} min, ${subtareas.size} subtareas)"
 }
 
-fun urgentes(tareas: List<Tarea>): List<String> = TODO()
+fun urgentes(tareas: List<Tarea>): List<String> = tareas.filter{it.prioridad == Prioridad.ALTA}.map{it.titulo}
 
-fun mensaje(evento: Evento): String = TODO()
+fun mensaje(evento: Evento): String = when (evento) {
+    is Evento.Creada -> "Nueva tarea: ${evento.titulo}"
+    is Evento.Completada -> "Completada: ${evento.titulo} en ${evento.minutosReales} min"
+    Evento.ListaVaciada -> "La lista está vacía"
+}
 
 // ---------- Comprobaciones (no modificar) ----------
 fun main() {

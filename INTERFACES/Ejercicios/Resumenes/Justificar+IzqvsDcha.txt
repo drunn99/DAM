@@ -1,0 +1,20 @@
+¿Justifica justificar?
+
+El texto justificado se utiliza en libros boletines periódicos y revistas en papel para generar un ritmo horizontal de lectura. No obstante en una web o una interfaz, el resultado final suele ser peor de lo esperado y por lo general, controlar lo suficiente los parámetros del texto para que no se generen los denominados "Rivers of white" es tan complicado que no merece la pena.
+
+Al final el concepto de justificar nace de una necesidad estética en los textos escritos que podemos no encontrar en las aplicaciones así que en definitiva
+y aunque es un tema polémico la realidad es que la justificación pareciera dar un tono más serio, casi burocrático a un texto, en la mayoría de las páginas, escribir bien y tener cierta consideración por los lectores con espacios, tamaños de fuente correctos y una buena disposición es suficiente.
+
+Entre la izquierda y la derecha.
+
+Hay que tener en cuenta la direccionalidad de la distribución de la página o la interfaz, intentar que sea siempre de izquierda a derecha, Jacobo Nielsen plantea que el 69% del tiempo de los usuarios miran hacia la izquierda, ya que allí se inician los textos etc, es el orden natural para la mayoría de culturas.
+
+• Mantener los menús de navegación a la izquierda. Es donde el usuario suele
+buscar sus opciones de navegación.
+• Situar la mayor parte del contenido en la zona contigua, un poco más adentro.
+• El elemento más importante debe estar situado en la “mejor zona”, justo donde
+los usuarios centran su atención: entre 1/3 y la mitad de la página según su eje
+vertical central.
+• El contenido secundario menos importante es mejor situarlo a la derecha. No
+se puede aspirar a tener un interés del 100% en todos los elementos, hay que
+jerarquizar.

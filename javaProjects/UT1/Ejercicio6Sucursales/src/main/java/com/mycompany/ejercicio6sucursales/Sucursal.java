@@ -7,7 +7,9 @@ package com.mycompany.ejercicio6sucursales;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import javax.print.attribute.DateTimeSyntax;
 
 /**
  *
@@ -19,7 +21,9 @@ public class Sucursal {
     private File ficheroSucursal;
 
     public Sucursal(String nombre,File ficheroSucursal) {
+        this.nombre = nombre;
         this.ficheroSucursal = ficheroSucursal;
+        this.ventas = new ArrayList<Venta>();
     }
 
     public String getNombre() {
@@ -34,6 +38,26 @@ public class Sucursal {
         return ficheroSucursal;
     }
     
+    public String getNombreSucursal() {
+        return ficheroSucursal.getName();
+    }
+    
+    public int getNumeroVentas() {
+        return  ventas.size();
+    }
+    
+    public float getImporteVentasTotal() {
+        float totalVentas = 0.0f;
+        for (Venta venta : ventas) {
+            totalVentas += venta.getImporte();
+        }
+        
+        return totalVentas;
+    }
+    
+    public float getImporteVentasPromedio() {
+        return getImporteVentasTotal() / getNumeroVentas();
+    }
 
     public int getDatosFichero() {
         try(BufferedReader br = new BufferedReader(new FileReader(ficheroSucursal))) {
@@ -41,19 +65,44 @@ public class Sucursal {
             while((nextLine = br.readLine()) != null) {
                 ventas.add(parseStringData(nextLine.split(";")));
             }
+            return 1;
         } catch (Exception ex){
-            
+            return 0;
         }
     }
     
-    private Venta parseStringData (String [] splitData) {
-        Venta newVenta = new Venta (
-                splitData[0],
-                splitData[1],
-                splitData[3]
-        );
+    public void addVenta(Venta newVenta) {
+        ventas.add(newVenta);
     }
     
+    public void sortVentas() {
+        ventas.sort((o1, o2) -> o1.getFecha().compareTo(o2.getFecha()));
+    }
+    
+    private Venta parseStringData (String [] splitData) {
+        String [] splitDate = splitData[1].split("/");
+        int year = Integer.parseInt(splitDate[2]);
+        int month = Integer.parseInt(splitDate[1]);
+        int day = Integer.parseInt(splitDate[0]);
+        Venta newVenta = new Venta (
+                splitData[0],
+                LocalDate.of(year,month,day),
+                Float.parseFloat(splitData[2])
+        );
+        
+        return newVenta;
+    }
+    
+    private void syncFileData(int option) {
+        switch (option) {
+            case 1: //addVenta() - Añadir venta a final de fichero.
+                
+                break;
+            case 2: //orderVenta() - Reescribir fichero con las ventas ordenadas.
+                
+                break;
+        }
+    }
     
     
 }

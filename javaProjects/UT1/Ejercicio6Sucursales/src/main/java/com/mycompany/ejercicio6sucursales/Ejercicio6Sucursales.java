@@ -4,6 +4,8 @@
 
 package com.mycompany.ejercicio6sucursales;
 
+import java.io.File;
+
 /**
  *
  * @author drunn
@@ -11,6 +13,12 @@ package com.mycompany.ejercicio6sucursales;
 public class Ejercicio6Sucursales {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Sucursal mad = new Sucursal("Madrid", new File(".\\data\\Madrid.txt"));
+        mad.getDatosFichero();
+        mad.sortVentas();
+        
+        Sucursal bcn = new Sucursal("Barcelona", new File(".\\data\\Barcelona.txt"));
+        bcn.getDatosFichero();
+        bcn.sortVentas();
     }
 }
