@@ -21,25 +21,30 @@ public class GestionRestaurante {
     
     private ArrayList<Restaurante> listaRestaurantes = new ArrayList<Restaurante>();
     
-    public void comprobarRuta (String ruta) {
+    public String comprobarRuta (String ruta) {
         File localFile = new File(ruta);
-        
-        System.out.println(localFile.exists() ? "El archivo existe" : "El archivo no existe");
-        if (localFile.isDirectory()) {
-            System.out.println("Es un directorio");
+
+        if(localFile.exists()) {
+            if (localFile.isDirectory()) {
+                return("Es un directorio");
+            } else {
+                return(
+                        "Es un fichero: \n" +
+                                "Nombre: " + localFile.getName() + "\n" +
+                                "Tamaño en bytes: " + localFile.length() + "\n" +
+                                "Permisos: Escritura " + localFile.canWrite() +
+                                " | Lectura " + localFile.canRead()
+                );
+            }
         } else {
-            System.out.println(
-                "Es un fichero: \n" +
-                "Nombre: " + localFile.getName() + "\n" +
-                "Tamaño en bytes: " + localFile.length() + "\n" +
-                "Permisos: Escritura " + localFile.canWrite() +
-                " | Lectura " + localFile.canRead()
-            );
+            return("El archivo no existe");
         }
     }
     
     public void leerFicheroRestaurantes (String ruta) throws FileNotFoundException {
         File localFile = new File(ruta);
+        listaRestaurantes.clear();
+
         if(localFile.isFile() && localFile.canRead()) {
             try (BufferedReader br = new BufferedReader(new FileReader(localFile))) {
                 
@@ -55,7 +60,7 @@ public class GestionRestaurante {
         }
     }
     
-    public void mostrarCp2(String ruta) throws FileNotFoundException{
+    public ArrayList<Restaurante> mostrarCp2(String ruta) throws FileNotFoundException{
         leerFicheroRestaurantes(ruta);
         
         ArrayList<Restaurante> listaFiltrada = new ArrayList<Restaurante>();
@@ -66,45 +71,47 @@ public class GestionRestaurante {
             }
         }
         
-        //TODO Mostrar lista filtrada. 
-        
+        return listaFiltrada;
     }
     
     public String addRestaurante (String ruta, Restaurante newRestaurante) {
         File fichero = new File(ruta);
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fichero))) {
-            bw.append("\n" + newRestaurante.toString());
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fichero,true))) {
+            bw.append(newRestaurante.toString());
             return "Se ha añadido correctamente el restaurante";
         } catch (Exception ex) {
             return "Ha ocurrido un error al añadir el restaurante: " + ex.getMessage();
         }
     }
     
-    public void copyWithoutCp2 () {
+    public int copyWithoutCp2 () {
         File newFile = new File(".\\files\\Restaurants2.csv");
         
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
             
-            bw.append("Restaurante;Direccion;Ciudad;Provincia;CP");
+            bw.append("Restaurante;Direccion;Ciudad;Provincia;CP\n");
             
             for (Restaurante restaurante : listaRestaurantes) {
                 if(restaurante.getCp().charAt(0) != '2') {
                     bw.append(restaurante.toString() + "\n");
                 }
             }
-            
+
+            return 0;
         } catch (Exception ex) {
+            ex.printStackTrace();
+            return 1;
         }
     }
     
-    public String deleteResFile (String ruta) {
+    public int deleteResFile (String ruta) {
         File deleteFile = new File(ruta);
         
         if(deleteFile.exists() && deleteFile.isFile()){
             deleteFile.delete();
-            return "El fichero se ha borrado correctamente";
+            return 0; //"El fichero se ha borrado correctamente";
         } else {
-            return "El fichero no existe o es un directorio";
+            return 1; //"El fichero no existe o es un directorio";
         }
     }
     
