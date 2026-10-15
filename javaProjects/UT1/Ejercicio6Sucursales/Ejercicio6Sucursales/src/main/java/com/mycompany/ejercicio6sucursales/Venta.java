@@ -35,8 +35,8 @@ public class Venta {
     
     @Override
     public String toString(){
-        return String.format("%s,%s,%f",empresa,fecha,importe );
-    }
+        return String.format("%s;%s;%.2f",empresa,fecha,importe );
+    }	
     
     
 }

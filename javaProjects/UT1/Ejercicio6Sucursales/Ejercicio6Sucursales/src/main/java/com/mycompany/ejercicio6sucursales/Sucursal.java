@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import javax.print.attribute.DateTimeSyntax;
 
 /**
  *
@@ -93,16 +92,6 @@ public class Sucursal {
         return newVenta;
     }
     
-    private void syncFileData(int option) {
-        switch (option) {
-            case 1: //addVenta() - Añadir venta a final de fichero.
-                
-                break;
-            case 2: //orderVenta() - Reescribir fichero con las ventas ordenadas.
-                
-                break;
-        }
-    }
     
     
 }
