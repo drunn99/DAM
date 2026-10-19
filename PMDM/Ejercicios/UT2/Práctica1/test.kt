@@ -9,9 +9,9 @@
 enum class Categoria (val descripcion: String) {
     JUEGOS("Juegos"),
     PRODUCTIVIDAD("Productividad"),
-    EDUCACION("Educacion"),
+    EDUCACION("Educación"),
     SALUD("Salud y deporte"),
-    MULTIMEDIA("Multimedia")
+    MULTIMEDIA("Música y vídeo"),
 }
 
 interface Describible {
@@ -22,7 +22,7 @@ data class Valoracion(val usuario: String, val estrellas: Int, val comentario: S
     
     init {
         require(usuario.trim().length > 0) {"Debe introducir un usuario"}
-        require(estrellas in 1..5) {"Debe introducir un usuario"}
+        require(estrellas in 1..5) {"Las estrellas deben estar entre 1 y 5"}
     }
     
     companion object {
@@ -44,19 +44,54 @@ abstract class Aplicacion(val id: String, val nombre: String, val categoria: Cat
         require(tamanoMb > 0) {"El tamaño de la aplicación debe ser mayor que 0"}
     }
     
-    
-    private var valoraciones = mutableListOf()<Valoracion>
-    val numValoraciones: Int
-    	get() = valoraciones.size()
-        
-    val mediaValoraciones: Double
-    	get() = if (valoraciones.size() == 0) 0 else valoraciones.map{it.estrellas}.sum() / valoraciones.size()
-    
-    
 
-    
+    private val valoraciones = mutableListOf<Valoracion>()
+    val numValoraciones: Int
+        get() = valoraciones.size
+
+    val mediaValoraciones: Double
+        get() = if (valoraciones.size == 0) 0.0 else valoraciones.map{it.estrellas}.average()
+
+   fun valorar(valoracion: Valoracion) {
+        valoraciones.removeAll {it.usuario == valoracion.usuario}
+        valoraciones.add(valoracion)
+
+   }
+
+    abstract fun precioFinal(): Double
+
+    abstract fun tipo(): String
+
+    override fun describir() : String = "[$id] $nombre · ${categoria.descripcion} · ${tipo()}"
     
 }
+
+class AppGratuita(id: String, nombre: String, categoria: Categoria, tamanoMb: Double, val conAnuncios: Boolean) : Aplicacion(id, nombre, categoria, tamanoMb) {
+    override fun precioFinal() = 0.0
+    
+    override fun tipo() = if (!conAnuncios) "Gratuita" else "Gratuita con anuncios"
+    
+}
+
+class AppDePago(id: String, nombre: String, categoria: Categoria, tamanoMb: Double, val precio: Double) : Aplicacion(id, nombre, categoria, tamanoMb) {
+    var descuento: Int = 0
+    	set(d) {
+            field = d.coerceIn(0,90)
+        }
+
+    override fun precioFinal() = (precio * (100 - descuento)) / 100
+    
+    override fun tipo() = "De pago"
+    
+}
+
+class AppSuscripcion(id: String, nombre: String, categoria: Categoria, tamanoMb: Double, val cuotaMensual: Double, val mesesPrueba: Int = 0) : Aplicacion(id, nombre, categoria, tamanoMb) {
+    override fun precioFinal() = (12 - mesesPrueba).coerceAtLeast(0) * cuotaMensual
+    
+    override fun tipo() = "Suscripción"
+    
+}
+
 // ======================= PARTE 3 =======================
 // ResultadoInstalacion, Dispositivo y mensaje()
 
@@ -75,7 +110,7 @@ fun main() {
     println()
     // Quita las dos barras de cada línea cuando hayas copiado el bloque de esa parte
     comprobacionesParte1()
-    // comprobacionesParte2()
+    comprobacionesParte2()
     // comprobacionesParte3()
     // comprobacionesParte4()
 }
@@ -147,7 +182,7 @@ fun comprobacionesParte1() {
 }
 
 // ------------------------------ PARTE 2 ------------------------------
-/*fun comprobacionesParte2() {
+fun comprobacionesParte2() {
     println("===== PARTE 2 =====")
     val ok = totalOk
     val n = totalPruebas
@@ -183,7 +218,7 @@ fun comprobacionesParte1() {
     }
     resumen("Parte 2", ok, n)
 }
-*/
+
 // ------------------------------ PARTE 3 ------------------------------
 /*fun comprobacionesParte3() {
     println("===== PARTE 3 =====")
