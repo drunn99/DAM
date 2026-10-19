@@ -9,6 +9,7 @@ package com.mycompany.ejercicio7restaurante;
  * @author drunn
  */
 public class Restaurante {
+
     private String restaurante;
     private String direccion;
     private String ciudad;
@@ -42,6 +43,7 @@ public class Restaurante {
     public String getCp() {
         return cp;
     }
+
 
     @Override
     public String toString() {
