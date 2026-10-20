@@ -6,6 +6,7 @@
 
 // ======================= PARTE 1 =======================
 // Categoria, Describible y Valoracion
+
 enum class Categoria (val descripcion: String) {
     JUEGOS("Juegos"),
     PRODUCTIVIDAD("Productividad"),
@@ -38,6 +39,7 @@ data class Valoracion(val usuario: String, val estrellas: Int, val comentario: S
 
 // ======================= PARTE 2 =======================
 // Aplicacion, AppGratuita, AppDePago y AppSuscripcion
+
 abstract class Aplicacion(val id: String, val nombre: String, val categoria: Categoria, val tamanoMb: Double) : Describible {
     
     init {
@@ -78,7 +80,7 @@ class AppDePago(id: String, nombre: String, categoria: Categoria, tamanoMb: Doub
     	set(d) {
             field = d.coerceIn(0,90)
         }
-
+ 
     override fun precioFinal() = (precio * (100 - descuento)) / 100
     
     override fun tipo() = "De pago"
@@ -94,6 +96,48 @@ class AppSuscripcion(id: String, nombre: String, categoria: Categoria, tamanoMb:
 
 // ======================= PARTE 3 =======================
 // ResultadoInstalacion, Dispositivo y mensaje()
+
+sealed interface ResultadoInstalacion {
+    data class Instalada(val app: Aplicacion, val espacioLibreMb: Double) : ResultadoInstalacion
+    
+    data class EspacioInsuficiente(val necesarioMb: Double, val disponibleMb: Double) : ResultadoInstalacion
+    
+    object YaInstalada : ResultadoInstalacion
+    
+}
+
+class Dispositivo(val modelo: String, val capacidadMb: Double) {
+    private val listaInstaladas = mutableListOf<Aplicacion>()
+    
+    val espacioLibreMb: Double 
+    	get() = capacidadMb - (listaInstaladas.sumOf{it.tamanoMb})
+        
+    fun instalar(app: Aplicacion): ResultadoInstalacion {
+        if (listaInstaladas.any{it.id == app.id}) {
+            return ResultadoInstalacion.YaInstalada
+        } else if (espacioLibreMb < app.tamanoMb) {
+            return ResultadoInstalacion.EspacioInsuficiente(app.tamanoMb, espacioLibreMb)
+        } else {
+            listaInstaladas.add(app)
+            return ResultadoInstalacion.Instalada(app, espacioLibreMb)
+        }
+    }
+    
+    fun desinstalar(id: String): Boolean {
+        return listaInstaladas.removeAll{it.id == id}
+    }
+    
+    fun aplicacionesInstaladas(): List<Aplicacion> = listaInstaladas
+    
+}
+
+fun mensaje(resultado: ResultadoInstalacion): String {
+    when(resultado){
+        is ResultadoInstalacion.YaInstalada ->return "La aplicación ya estaba instalada"
+        is ResultadoInstalacion.EspacioInsuficiente -> return "Sin espacio: Necesita $necesarioMb MB y hay $disponibleMb MB"
+        is ResultadoInstalacion.Instalada -> return "Instalada: ${app.nombre} (Quedan $espacioLibreMb MB)"
+    }
+}
 
 
 // ======================= PARTE 4 =======================
@@ -111,7 +155,7 @@ fun main() {
     // Quita las dos barras de cada línea cuando hayas copiado el bloque de esa parte
     comprobacionesParte1()
     comprobacionesParte2()
-    // comprobacionesParte3()
+    comprobacionesParte3()
     // comprobacionesParte4()
 }
 
@@ -220,7 +264,7 @@ fun comprobacionesParte2() {
 }
 
 // ------------------------------ PARTE 3 ------------------------------
-/*fun comprobacionesParte3() {
+fun comprobacionesParte3() {
     println("===== PARTE 3 =====")
     val ok = totalOk
     val n = totalPruebas
@@ -235,6 +279,7 @@ fun comprobacionesParte2() {
         movil.instalar(juego)
     }
     comprobar("Espacio libre", 300.0) { movil.espacioLibreMb }
+    
     comprobar("Aplicaciones instaladas", 1) { movil.aplicacionesInstaladas().size }
     comprobar("Desinstalar una app instalada", true) { movil.desinstalar("SA01") }
     comprobar("Desinstalar una app que no está", false) { movil.desinstalar("SA01") }
@@ -248,8 +293,9 @@ fun comprobacionesParte2() {
         mensaje(ResultadoInstalacion.YaInstalada)
     }
     resumen("Parte 3", ok, n)
+    
 }
-*/
+
 // ------------------------------ PARTE 4 ------------------------------
 /*fun comprobacionesParte4() {
     println("===== PARTE 4 =====")
