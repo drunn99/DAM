@@ -1,7 +1,7 @@
 // =====================================================================
 //  PMDM · UT2 · Práctica 1 — Modelo de clases de una tienda de aplicaciones
-//  Alumno/a: Nombre Apellido
-//  Nombre de este fichero al entregar: nombre_apellido_pmdm_ut2_p1.kt
+//  Alumno/a: Daniel Núñez Uribe
+//  Nombre de este fichero al entregar: daniel_nunez_pmdm_ut2_p1.kt
 // =====================================================================
 
 // ======================= PARTE 1 =======================
@@ -127,15 +127,15 @@ class Dispositivo(val modelo: String, val capacidadMb: Double) {
         return listaInstaladas.removeAll{it.id == id}
     }
     
-    fun aplicacionesInstaladas(): List<Aplicacion> = listaInstaladas
+    fun aplicacionesInstaladas(): List<Aplicacion> = listaInstaladas.toList()
     
 }
 
 fun mensaje(resultado: ResultadoInstalacion): String {
     when(resultado){
         is ResultadoInstalacion.YaInstalada ->return "La aplicación ya estaba instalada"
-        is ResultadoInstalacion.EspacioInsuficiente -> return "Sin espacio: Necesita $necesarioMb MB y hay $disponibleMb MB"
-        is ResultadoInstalacion.Instalada -> return "Instalada: ${app.nombre} (Quedan $espacioLibreMb MB)"
+        is ResultadoInstalacion.EspacioInsuficiente -> return "Sin espacio: necesita ${resultado.necesarioMb} MB y hay ${resultado.disponibleMb} MB"
+        is ResultadoInstalacion.Instalada -> return "Instalada: ${resultado.app.nombre} (quedan ${resultado.espacioLibreMb} MB)"
     }
 }
 
@@ -143,10 +143,64 @@ fun mensaje(resultado: ResultadoInstalacion): String {
 // ======================= PARTE 4 =======================
 // Tienda y la extension function tamanoTotalMb()
 
+class Tienda(val nombre: String) {
+    private val catalogo = mutableListOf<Aplicacion>()
+    
+    fun publicar(app: Aplicacion): Boolean = if (catalogo.any{it.id == app.id}) false else catalogo.add(app)
+    
+    fun buscarPorId(id: String): Aplicacion? = catalogo.find {it.id == id}
+    
+    fun buscar(texto: String): List<Aplicacion> = catalogo.filter{it.nombre.contains(texto, ignoreCase = true)}
+    
+    fun porCategoria(categoria: Categoria): List<Aplicacion> = catalogo.filter{it.categoria == categoria}
+    
+    fun filtrar(condicion: (Aplicacion) -> Boolean): List<Aplicacion> = catalogo.filter{condicion(it)}
+    
+    fun mejorValoradas(n: Int): List<Aplicacion> =  catalogo.filter{it.numValoraciones > 0}.sortedByDescending{it.mediaValoraciones}.take(n)
+    
+    fun recuentoPorCategoria(): Map<Categoria, Int> = catalogo.groupBy{it.categoria}.mapValues{it.value.size}
+    
+    fun precioMedioDePago(): Double = catalogo.filterIsInstance<AppDePago>().map{it.precioFinal()}.average()
+}
+
+fun List<Aplicacion>.tamanoTotalMb(): Double = this.sumOf{it.tamanoMb}
 
 // ======================= PARTE 5 =======================
 fun programaPrincipal() {
-    // Escribe aquí tu programa principal (apartado 5 del enunciado)
+    println("======================= PARTE 5 =======================")
+    println("=== 5.1 Catálogo ===")
+	//R1 y R2
+    val pleiEstor = Tienda("pleiEstor")
+    val app1 = AppGratuita("M01","Instagram",Categoria.MULTIMEDIA,344.0,false)
+    val app2 = AppGratuita("J02","Monster Hunter Now",Categoria.JUEGOS,1245.0,true)
+    val app3 = AppDePago("J03","Profesor Layton: La villa misteriosa",Categoria.JUEGOS,266.8,14.99)
+    val app4 = AppDePago("E04","Lingodeer",Categoria.EDUCACION,90.0,79.99)
+    val app5 = AppSuscripcion("S05","Tinder",Categoria.SALUD, 120.5,9.99,1)
+    val app6 = AppSuscripcion("M06","Netflix",Categoria.MULTIMEDIA,524.0,14.99)
+    val app7 = AppGratuita("J07","Clash of Clans",Categoria.JUEGOS,344.0,true)
+    val app8 = AppGratuita("P08","Habitica",Categoria.PRODUCTIVIDAD,194.0,false)
+    val apps = listOf(app1,app2,app3,app4,app5,app6,app7,app8)
+    apps.forEach{pleiEstor.publicar(it)}
+    
+	//R3
+    app3.descuento = 10
+    app4.descuento = 100
+    
+    //R4
+    apps.forEach{println("${it.describir()} - ${it.precioFinal()}€")}
+    
+    //R5
+    println(pleiEstor.publicar(AppGratuita("M01","Facebook",Categoria.MULTIMEDIA,604.0,false))) //Imprime false
+    
+    println("=== 5.2 Valoraciones ===")
+    //R6
+    
+  	
+    //R7
+    
+    println("=== 5.3 Consultas ===")
+    
+    println("=== 5.4 Instalación ===")
 }
 
 fun main() {
@@ -156,7 +210,7 @@ fun main() {
     comprobacionesParte1()
     comprobacionesParte2()
     comprobacionesParte3()
-    // comprobacionesParte4()
+    comprobacionesParte4()
 }
 
 // ================== COMPROBACIONES (pega aquí los bloques) ==================
@@ -297,7 +351,7 @@ fun comprobacionesParte3() {
 }
 
 // ------------------------------ PARTE 4 ------------------------------
-/*fun comprobacionesParte4() {
+fun comprobacionesParte4() {
     println("===== PARTE 4 =====")
     val ok = totalOk
     val n = totalPruebas
@@ -332,4 +386,3 @@ fun comprobacionesParte3() {
     comprobar("tamanoTotalMb (extension function)", 560.0) { listOf(a, c).tamanoTotalMb() }
     resumen("Parte 4", ok, n)
 }
-*/
