@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">VisorDam</string>
+    <string name="titulo_principal">Visor de módulos DAM</string>
+    <string name="descripcion_principal">Consulta los datos de un módulo del ciclo o visita la web del centro.</string>
+    <string name="boton_detalle">Ver detalle del módulo</string>
+    <string name="boton_web">Abrir la web del centro</string>
+    <string name="titulo_detalle">Detalle del módulo</string>
+    <string name="modulo_pmdm">Programación Multimedia y Dispositivos Móviles</string>
+    <string name="sin_datos">No se han recibido datos</string>
+    <string name="boton_volver">Volver</string>
+</resources>
