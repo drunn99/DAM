@@ -3,6 +3,8 @@ package psp.ut1.practica;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AnalizadorLogs {
     //Analizar un fichero.
@@ -62,12 +64,15 @@ public class AnalizadorLogs {
             try {
                 File log = new File(path);
                 if(log.exists() && log.isFile()) {
+                    //Leer fichero linea a linea
+                    //Pasarlo a result.processLine() para que suma y añada valores a sus variables locales y globales
+                    //Añadir objeto result a arrayList de resultados
                     BufferedReader br = new BufferedReader(new FileReader(log));
                     Result currentLogResult = new Result(log.getName(), log.getAbsolutePath());
                     String nextLine;
 
                     while((nextLine = br.readLine()) != null) {
-
+                        currentLogResult.processLine(nextLine);
                     }
 
                 } else {
@@ -77,9 +82,6 @@ public class AnalizadorLogs {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            //Leer fichero linea a linea
-            //Pasarlo a result.processLine() para que suma y añada valores a sus variables locales y globales
-            //Añadir objeto result a arrayList de resultados
         }
             //Componer retornos por fichero desde arraylist de objetos results
             //Añadir retornos globales (Los de una sola vez + suma por ip y código)
@@ -97,8 +99,8 @@ class Result {
     static int filesTotalInvalidLines = 0;
     static int filesTotalSlowCalls = 0;
     static long filesBytesTotal = 0;
-    static HashMap globalStatusCounter;
-    static HashMap globalIpCounter;
+    static HashMap<String, Integer> globalStatusCounter = new HashMap<String, Integer>();
+    static HashMap<String, Integer>  globalIpCounter = new HashMap<String, Integer>();
 
     long fileTotalLines = 0L;
     int fileTotalInvalidLines = 0;
@@ -110,6 +112,10 @@ class Result {
     boolean isFailed = false;
 
     final String end = "FIN";
+
+    final Pattern regExIP = Pattern.compile("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}");
+    final Pattern regExDate = Pattern.compile("\\[(.*?)\\]");
+    final Pattern regExMethod = Pattern.compile("\\\"(.*?)\\\"");
 
     //region Constructor
 
@@ -128,6 +134,21 @@ class Result {
 
     public void processLine (String line) {
         //192.168.1.30 - - [01/Sep/2026:10:15:32 +0200] "GET /img/logo.png HTTP/1.1" 200 5320 87
+        //^(?:[0-9]{1,3}\.){3}[0-9]{1,3} para ip
+        //\[(.*?)\] para la fecha
+        //\"(.*?)\" para el metodo
+        //split por espacio y coger los tres ultimos
+        Matcher ipMatcher = regExIP.matcher(line);
+        if (ipMatcher.find()) {
+            int ipCounter = globalIpCounter.get(ipMatcher) != null ? globalIpCounter.get(ipMatcher) : 0;
+            globalIpCounter.put(ipMatcher.group(1), ipCounter + 1);
+        }
+
+        Matcher dateMatcher = regExDate.matcher(line);
+        if(dateMatcher.find()) {
+            
+        }
+
 
     }
 }
