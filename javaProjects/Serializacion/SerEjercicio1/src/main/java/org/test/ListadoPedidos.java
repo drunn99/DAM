@@ -43,7 +43,7 @@ public class ListadoPedidos {
     }
 
     public int actualizarFicheroPedidos() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("..\\files\\pedidos.ser"));) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(".\\files\\pedidos.ser"));) {
             out.writeObject(pedidos);
             return 0;
         } catch (IOException ex) {
@@ -53,13 +53,22 @@ public class ListadoPedidos {
     }
 
     public int cargarDatosPedidos() {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("..\\files\\pedidos.ser"));) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(".\\files\\pedidos.ser"));) {
             pedidos = (ArrayList<Pedido>) in.readObject();
+            sincronizarContador();
             return 0;
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
             return 1;
         }
+    }
+
+    private void sincronizarContador() {
+        int maxId = 0;
+        for (Pedido pedido : pedidos) {
+            maxId = Math.max(maxId, pedido.getIdPedido());
+        }
+        Pedido.actualizarContador(maxId + 1);
     }
     //endregion
 }

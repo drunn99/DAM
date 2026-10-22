@@ -3,6 +3,8 @@ package org.test;
 import java.io.Serializable;
 
 public class Cliente implements Serializable {
+    private static int contadorId = 1;
+
     private int idCliente;
     private String nombre;
     private String email;
@@ -10,12 +12,18 @@ public class Cliente implements Serializable {
     private String telefono;
 
     //region Constructors
-    public Cliente(int idCliente, String nombre, String email, String direccion, String telefono) {
-        this.idCliente = idCliente;
+    public Cliente(String nombre, String email, String direccion, String telefono) {
+        this.idCliente = contadorId++;
         this.nombre = nombre;
         this.email = email;
         this.direccion = direccion;
         this.telefono = telefono;
+    }
+    //endregion
+
+    //region Contador
+    public static void actualizarContador(int siguienteId) {
+        contadorId = Math.max(contadorId, siguienteId);
     }
     //endregion
 
@@ -42,10 +50,6 @@ public class Cliente implements Serializable {
     //endregion
 
     //region Setters
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
-    }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }

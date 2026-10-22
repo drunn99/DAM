@@ -31,7 +31,7 @@ public class ListadoClientes {
     }
 
     public int actualizarFicheroClientes() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("..\\files\\clientes.ser"));) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(".\\files\\clientes.ser"));) {
             out.writeObject(clientes);
             return 0;
         } catch (IOException ex) {
@@ -41,13 +41,22 @@ public class ListadoClientes {
     }
 
     public int cargarDatosClientes() {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("..\\files\\clientes.ser"));) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(".\\files\\clientes.ser"));) {
             clientes = (ArrayList<Cliente>) in.readObject();
+            sincronizarContador();
             return 0;
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
             return 1;
         }
+    }
+
+    private void sincronizarContador() {
+        int maxId = 0;
+        for (Cliente cliente : clientes) {
+            maxId = Math.max(maxId, cliente.getIdCliente());
+        }
+        Cliente.actualizarContador(maxId + 1);
     }
     //endregion
 }

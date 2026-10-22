@@ -15,7 +15,7 @@ public class ListadoProductos {
     //region Methods
     public Producto buscarProductoDisponiblePorNombre(String nombreProducto) {
         for (Producto producto : productos) {
-            if (producto.getNombreProducto() == nombreProducto && producto.getCantidadDisponible() > 0) {
+            if (producto.getNombreProducto().equalsIgnoreCase(nombreProducto) && producto.getCantidadDisponible() > 0) {
                 return producto;
             }
         }
@@ -41,14 +41,14 @@ public class ListadoProductos {
 
     public ArrayList<Producto> ordenarProductosPorPrecio() {
         ArrayList<Producto> sortedProductos = new ArrayList<Producto>();
-        Collections.copy(sortedProductos,productos);
-        sortedProductos.sort(Comparator.comparing(Producto::getCantidadDisponible));
+        sortedProductos.addAll(productos);
+        sortedProductos.sort(Comparator.comparing(Producto::getPrecio));
 
         return sortedProductos;
     }
 
     public int actualizarFicheroProductos() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("..\\files\\productos.ser"));) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(".\\files\\productos.ser"));) {
             out.writeObject(productos);
             return 0;
         } catch (IOException ex) {
@@ -58,13 +58,22 @@ public class ListadoProductos {
     }
 
     public int cargarDatosProductos() {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("..\\files\\productos.ser"));) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(".\\files\\productos.ser"));) {
             productos = (ArrayList<Producto>) in.readObject();
+            sincronizarContador();
             return 0;
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
             return 1;
         }
+    }
+
+    private void sincronizarContador() {
+        int maxId = 0;
+        for (Producto producto : productos) {
+            maxId = Math.max(maxId, producto.getIdProdcucto());
+        }
+        Producto.actualizarContador(maxId + 1);
     }
     //endregion
 }

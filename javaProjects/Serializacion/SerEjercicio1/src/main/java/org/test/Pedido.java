@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Pedido implements Serializable {
+    private static int contadorId = 1;
+
     private int idPedido;
     private int idCliente;
     private ArrayList<Producto> productosPedido;
@@ -12,12 +14,18 @@ public class Pedido implements Serializable {
     private String estado;
 
     //region Constructors
-    public Pedido(int idPedido, int idCliente, ArrayList<Producto> productosPedido, LocalDate fechaPedido, String estado) {
-        this.idPedido = idPedido;
+    public Pedido(int idCliente, ArrayList<Producto> productosPedido, LocalDate fechaPedido, String estado) {
+        this.idPedido = contadorId++;
         this.idCliente = idCliente;
         this.productosPedido = productosPedido;
         this.fechaPedido = fechaPedido;
         this.estado = estado;
+    }
+    //endregion
+
+    //region Contador
+    public static void actualizarContador(int siguienteId) {
+        contadorId = Math.max(contadorId, siguienteId);
     }
     //endregion
 
@@ -44,10 +52,6 @@ public class Pedido implements Serializable {
     //endregion
 
     //region Setters
-    public void setIdPedido(int idPedido) {
-        this.idPedido = idPedido;
-    }
-
     public void setIdCliente(int idCliente) {
         this.idCliente = idCliente;
     }

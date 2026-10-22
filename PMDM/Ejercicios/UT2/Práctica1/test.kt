@@ -194,13 +194,85 @@ fun programaPrincipal() {
     
     println("=== 5.2 Valoraciones ===")
     //R6
+    val listaValoraciones = listOf("Eva;4;Buena red social",
+                                   "Mario;5;Me encanta!",
+                                   "Diego;3;Buen juego, mal port",
+                                   "Laura;5;Buenísima!",
+                                   "Raul;",
+                                   "Hector;9")
     
-  	
+    listaValoraciones.forEachIndexed { index, texto ->
+        val valoracion = Valoracion.desdeTexto(texto)
+        if (valoracion == null)
+        	println("Valoración descartada: " + texto)
+        else
+			apps[index].valorar(valoracion)
+    }
+    
     //R7
+    val valoracionCambiar = Valoracion.desdeTexto(listaValoraciones.first())
+    
+    val instagram = apps[0]
+    
+    println("Num valoraciones antes de cambio: " + instagram.numValoraciones)
+    println("Media valoraciones antes de cambio: " + instagram.mediaValoraciones)
+    
+    valoracionCambiar?.let { 
+       	val valoracionCambiada = valoracionCambiar.copy(estrellas = 1, comentario = "La última actualización ha roto todo")
+    	instagram.valorar(valoracionCambiada)
+    }
+    
+    println("Num valoraciones después de cambio: " + instagram.numValoraciones)
+    println("Media valoraciones después de cambio: " + instagram.mediaValoraciones)
     
     println("=== 5.3 Consultas ===")
+    //R8
+    pleiEstor.mejorValoradas(3).forEach {
+        println("${it.describir()} - Media de valoración: ${it.mediaValoraciones}")
+    }
+    
+    //R9
+    pleiEstor.recuentoPorCategoria().forEach {(categoria, cantidad) ->
+    	println("$categoria - $cantidad")
+    }
+    
+    //R10
+    pleiEstor.buscar("Monster").forEach {
+        println("App encontrada buscando: ${it.describir()}" )
+    }
+    
+    //R11
+    pleiEstor.filtrar{ it.precioFinal() > 5 }.forEach {
+        println("App encontrada filtrando, precio final mayor de 5€: ${it.describir()} - ${it.precioFinal()}" )
+    }
+    
+    pleiEstor.filtrar{ it.tipo() == "Gratuita" }.forEach {
+        println("App encontrada filtrando, tipo \"Gratuita\": ${it.describir()}" )
+    }
     
     println("=== 5.4 Instalación ===")
+    //R12
+    val movil = Dispositivo("Nothing Phone 3a Pro", 3200.0)
+    
+    apps.forEach {
+        val resultadoInstalacion = movil.instalar(it)
+        println("Resultado instalación \"${it.nombre}\": " + mensaje(resultadoInstalacion))
+    }
+    
+    val appExistente = AppGratuita("M01","Netflix",Categoria.MULTIMEDIA,344.0,false)
+    val nuevaApp = AppGratuita("M02","Prime Video",Categoria.MULTIMEDIA,544.0,false)
+    
+    var resultadoInstalacion = movil.instalar(appExistente)
+    println("Resultado instalación \"${appExistente.nombre}\": " + mensaje(resultadoInstalacion))
+    
+    resultadoInstalacion = movil.instalar(nuevaApp)
+    println("Resultado instalación \"${nuevaApp.nombre}\": " + mensaje(resultadoInstalacion))
+    
+    //R13
+    movil.desinstalar("J07")
+    println("Quedan ${movil.espacioLibreMb}Mb libres")
+    println("El tamaño ocupado por las apps es de: ${movil.capacidadMb - movil.espacioLibreMb}Mb")
+    
 }
 
 fun main() {
