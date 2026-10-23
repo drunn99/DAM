@@ -99,8 +99,8 @@ class Result {
     static int filesTotalInvalidLines = 0;
     static int filesTotalSlowCalls = 0;
     static long filesBytesTotal = 0;
-    static HashMap<String, Integer> globalStatusCounter = new HashMap<String, Integer>();
     static HashMap<String, Integer>  globalIpCounter = new HashMap<String, Integer>();
+    static HashMap<String, Integer>  globalResponseCounter = new HashMap<String, Integer>();
 
     long fileTotalLines = 0L;
     int fileTotalInvalidLines = 0;
@@ -113,9 +113,13 @@ class Result {
 
     final String end = "FIN";
 
+    //192.168.1.30 - - [01/Sep/2026:10:15:32 +0200] "GET /img/logo.png HTTP/1.1" 200 5320 87
+    //^(?:[0-9]{1,3}\.){3}[0-9]{1,3} para ip
+    //\[(.*?)\] para la fecha
+    //\"(.*?)\" para el metodo
     final Pattern regExIP = Pattern.compile("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}");
-    final Pattern regExDate = Pattern.compile("\\[(.*?)\\]");
-    final Pattern regExMethod = Pattern.compile("\\\"(.*?)\\\"");
+    final Pattern regExStatus = Pattern.compile("[[:blank:]]\\d{3}[[:blank:]]\\d{0,12}[[:blank:]]\\d{0,6}");
+    final Pattern regExRequest = Pattern.compile("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}[[:blank:]]\\-[[:blank:]]\\-[[:blank:]]\\[(.*?)\\][[:blank:]]\"(.*?)\\\"([[:blank:]]\\d{3}[[:blank:]]\\d{0,12}[[:blank:]]\\d{0,6})$");
 
     //region Constructor
 
@@ -132,22 +136,32 @@ class Result {
 
     //endregion
 
-    public void processLine (String line) {
-        //192.168.1.30 - - [01/Sep/2026:10:15:32 +0200] "GET /img/logo.png HTTP/1.1" 200 5320 87
-        //^(?:[0-9]{1,3}\.){3}[0-9]{1,3} para ip
-        //\[(.*?)\] para la fecha
-        //\"(.*?)\" para el metodo
-        //split por espacio y coger los tres ultimos
-        Matcher ipMatcher = regExIP.matcher(line);
-        if (ipMatcher.find()) {
-            int ipCounter = globalIpCounter.get(ipMatcher) != null ? globalIpCounter.get(ipMatcher) : 0;
-            globalIpCounter.put(ipMatcher.group(1), ipCounter + 1);
-        }
+    public void processLine (String line, int slowThreshold) {
+        if (line.matches(regExRequest.pattern())){
+            Matcher ipMatcher = regExIP.matcher(line);
+            if (ipMatcher.find()) {
+                int ipCounter = globalIpCounter.get(ipMatcher.group(1)) != null ? globalIpCounter.get(ipMatcher.group(1)) : 0;
+                globalIpCounter.put(ipMatcher.group(1), ipCounter + 1);
+            }
 
-        Matcher dateMatcher = regExDate.matcher(line);
-        if(dateMatcher.find()) {
-            
+            String [] splitData = line.split(regExStatus.pattern())[0].split(" ");
+            if (splitData.length == 3) {
+                processResponse(splitData,slowThreshold);
+            } else {
+                fileTotalInvalidLines++;
+                filesTotalInvalidLines++;
+            }
+        } else {
+            fileTotalInvalidLines++;
+            filesTotalInvalidLines++;
         }
+    }
+
+    private void processResponse(String [] response, int slowThreshold) {
+        int responseCounter = globalResponseCounter.get(response[0]) != null ? globalResponseCounter.get(response[0]) : 0;
+        int bytesCounter = Integer.parseInt(response[1]);
+        int msCounter = Integer.parseInt(response[2]);
+
 
 
     }
