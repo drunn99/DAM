@@ -3,6 +3,7 @@ package psp.ut1.practica;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,11 +13,23 @@ public class AnalizadorLogs {
     //Escribir los resultados siguiendo el protocolo.
     //Decidir el código de salida.
     public static void main(String[] args) {
+        String exitMsg = "Ejecución correcta: se han analizado todos los ficheros recibidos.";
+        int exitCode = 0;
+
         int slowThreshold = getSlowThresholdWithError(args);
         ArrayList<String> rutasFicheros = getFilesPathFromInput();
-        ArrayList<String> results = getFileData(rutasFicheros);
+        ArrayList<String> results = getFileData(rutasFicheros, slowThreshold);
+
+        for (String str : results) {
+            if (str.contains("ERROR") && exitCode == 0) {
+                exitCode = 2;
+                exitMsg = "Algún fichero no se ha podido leer. El resto se han analizado y sus resultados son válidos.";
+            }
+            System.out.println(str);
+        }
 
 
+        exitWithCodeAndMessage(exitCode,exitMsg);
     }
 
     private static int getSlowThresholdWithError(String[] args) {
@@ -40,7 +53,7 @@ public class AnalizadorLogs {
             String nextLine;
             while ((nextLine = br.readLine()) != null)  {
                 loops++;
-                if(nextLine.trim().length() == 0){
+                if(nextLine.trim().length() != 0){
                     filesPath.add(nextLine);
                 }
             }
@@ -57,72 +70,118 @@ public class AnalizadorLogs {
         }
     }
 
-    private static ArrayList<String> getFileData(ArrayList<String> filesPath) {
+    private static ArrayList<String> getFileData(ArrayList<String> filesPath, int slowThreshold) {
         ArrayList<Result> results = new ArrayList<Result>();
         for (String path : filesPath) {
-            //Abrir ruta de fichero
-            try {
-                File log = new File(path);
-                if(log.exists() && log.isFile()) {
-                    //Leer fichero linea a linea
-                    //Pasarlo a result.processLine() para que suma y añada valores a sus variables locales y globales
-                    //Añadir objeto result a arrayList de resultados
-                    BufferedReader br = new BufferedReader(new FileReader(log));
-                    Result currentLogResult = new Result(log.getName(), log.getAbsolutePath());
-                    String nextLine;
+            File log = new File(path);
+            if(log.exists() && log.isFile()) {
+                try(BufferedReader br = new BufferedReader(new FileReader(log))) {
 
-                    while((nextLine = br.readLine()) != null) {
-                        currentLogResult.processLine(nextLine);
-                    }
+                        Result currentLogResult = new Result(log.getName(), log.getAbsolutePath());
+                        String nextLine;
 
-                } else {
+                        while((nextLine = br.readLine()) != null) {
+                            currentLogResult.processLine(nextLine, slowThreshold);
+                        }
+
+                        results.add(currentLogResult);
+
+                } catch (Exception e) {
                     results.add(new Result("",path, true));
                 }
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            } else {
+                results.add(new Result("",path, true));
             }
         }
-            //Componer retornos por fichero desde arraylist de objetos results
-            //Añadir retornos globales (Los de una sola vez + suma por ip y código)
-            //Añadir retorno FIN
+
+        ArrayList<String> resultsText = new ArrayList<String>();
+        resultsText.addAll(getOKFilesResult(results));
+        resultsText.addAll(getInvalidFilesResult(results));
+        resultsText.addAll(getTotalFilesResult());
+        resultsText.addAll(getIpAndResponseSummary());
+        resultsText.add("FIN");
+
+        return resultsText;
+    }
+
+    private static ArrayList<String> getOKFilesResult(ArrayList<Result> filesResult) {
+        ArrayList<String> resultsToText = new ArrayList<String>();
+        for (Result res : filesResult) {
+            if (!res.isFailed()) {
+                String toText = String.format("FICHERO;%s;%d;%d",res.getFileName(), res.fileTotalLines, res.fileTotalInvalidLines);
+                resultsToText.add(toText);
+            }
+        }
+
+        return resultsToText;
+    }
+
+    private static ArrayList<String> getInvalidFilesResult(ArrayList<Result> filesResult) {
+        ArrayList<String> resultsToText = new ArrayList<String>();
+        for (Result res : filesResult) {
+            if (res.isFailed()) {
+                String toText = String.format("ERROR;%s",res.getFilePath());
+                resultsToText.add(toText);
+            }
+        }
+
+        return resultsToText;
+    }
+
+    private static ArrayList<String> getTotalFilesResult() {
+        ArrayList<String> resultsToText = new ArrayList<String>();
+
+        resultsToText.add(String.format("TOTAL;%d;%d", Result.filesTotalLines,Result.filesTotalInvalidLines));
+        resultsToText.add(String.format("BYTES;%d",Result.filesBytesTotal));
+        resultsToText.add(String.format("LENTAS;%d",Result.filesTotalSlowCalls));
+
+        return resultsToText;
+    }
+
+    private static ArrayList<String> getIpAndResponseSummary(){
+        ArrayList<String> resultsToText = new ArrayList<String>();
+
+        for (Map.Entry<String, Integer> entry : Result.globalResponseCounter.entrySet()){
+            resultsToText.add(String.format("ESTADO;%s;%d",entry.getKey(),entry.getValue()));
+        }
+
+        for (Map.Entry<String, Integer> entry : Result.globalIpCounter.entrySet()){
+            resultsToText.add(String.format("IP;%s;%d",entry.getKey(),entry.getValue()));
+        }
+
+        return resultsToText;
     }
 
     private static void exitWithCodeAndMessage (int code, String message) {
         System.err.println(ProcessHandle.current().pid() + " - " + message);
         System.exit(code);
     }
+
 }
 
 class Result {
-    static long filesTotalLines = 0L;
-    static int filesTotalInvalidLines = 0;
-    static int filesTotalSlowCalls = 0;
-    static long filesBytesTotal = 0;
-    static HashMap<String, Integer>  globalIpCounter = new HashMap<String, Integer>();
-    static HashMap<String, Integer>  globalResponseCounter = new HashMap<String, Integer>();
+    public static long filesTotalLines = 0L;
+    public static int filesTotalInvalidLines = 0;
+    public static int filesTotalSlowCalls = 0;
+    public static long filesBytesTotal = 0;
+    public static HashMap<String, Integer> globalIpCounter = new HashMap<String, Integer>();
+    public static HashMap<String, Integer> globalResponseCounter = new HashMap<String, Integer>();
 
-    long fileTotalLines = 0L;
-    int fileTotalInvalidLines = 0;
-    int fileSlowCalls = 0;
-    long bytesTotal = 0;
+    public long fileTotalLines = 0L;
+    public int fileTotalInvalidLines = 0;
+    public int fileSlowCalls = 0;
+    public long bytesTotal = 0;
 
-    String fileName;
-    String filePath;
-    boolean isFailed = false;
+    private String fileName;
+    private String filePath;
+    private boolean isFailed = false;
 
-    final String end = "FIN";
-
-    //192.168.1.30 - - [01/Sep/2026:10:15:32 +0200] "GET /img/logo.png HTTP/1.1" 200 5320 87
-    //^(?:[0-9]{1,3}\.){3}[0-9]{1,3} para ip
-    //\[(.*?)\] para la fecha
-    //\"(.*?)\" para el metodo
-    final Pattern regExIP = Pattern.compile("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}");
-    final Pattern regExStatus = Pattern.compile("[[:blank:]]\\d{3}[[:blank:]]\\d{0,12}[[:blank:]]\\d{0,6}");
-    final Pattern regExRequest = Pattern.compile("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}[[:blank:]]\\-[[:blank:]]\\-[[:blank:]]\\[(.*?)\\][[:blank:]]\"(.*?)\\\"([[:blank:]]\\d{3}[[:blank:]]\\d{0,12}[[:blank:]]\\d{0,6})$");
+    private final Pattern regExRequest = Pattern.compile(
+            "^((?:[0-9]{1,3}\\.){3}[0-9]{1,3})\\s+\\-\\s+\\-\\s+\\[(.*?)\\]\\s+\\\"(.*?)\\\"" +
+                    "\\s+(\\d{3})\\s+(\\d+)\\s+(\\d+)$"
+    );
 
     //region Constructor
-
     public Result(String fileName, String filePath, boolean isFailed) {
         this.fileName = fileName;
         this.filePath = filePath;
@@ -133,36 +192,54 @@ class Result {
         this.fileName = fileName;
         this.filePath = filePath;
     }
-
     //endregion
 
-    public void processLine (String line, int slowThreshold) {
-        if (line.matches(regExRequest.pattern())){
-            Matcher ipMatcher = regExIP.matcher(line);
-            if (ipMatcher.find()) {
-                int ipCounter = globalIpCounter.get(ipMatcher.group(1)) != null ? globalIpCounter.get(ipMatcher.group(1)) : 0;
-                globalIpCounter.put(ipMatcher.group(1), ipCounter + 1);
-            }
+    //region Getters
+    public String getFilePath() {
+        return filePath;
+    }
 
-            String [] splitData = line.split(regExStatus.pattern())[0].split(" ");
-            if (splitData.length == 3) {
-                processResponse(splitData,slowThreshold);
-            } else {
-                fileTotalInvalidLines++;
-                filesTotalInvalidLines++;
-            }
+    public String getFileName() {
+        return fileName;
+    }
+
+    public boolean isFailed() {
+        return isFailed;
+    }
+    //endregion
+
+    //region Methods
+    public void processLine(String line, int slowThreshold) {
+        Matcher matcher = regExRequest.matcher(line);
+
+        if (matcher.matches()) {
+            String ip = matcher.group(1);
+            globalIpCounter.put(ip, globalIpCounter.getOrDefault(ip, 0) + 1);
+
+            String statusCode = matcher.group(4);
+            int bytes = Integer.parseInt(matcher.group(5));
+            int timeMs = Integer.parseInt(matcher.group(6));
+
+            processResponse(statusCode, bytes, timeMs, slowThreshold);
         } else {
             fileTotalInvalidLines++;
             filesTotalInvalidLines++;
         }
+
+        fileTotalLines++;
+        filesTotalLines++;
     }
 
-    private void processResponse(String [] response, int slowThreshold) {
-        int responseCounter = globalResponseCounter.get(response[0]) != null ? globalResponseCounter.get(response[0]) : 0;
-        int bytesCounter = Integer.parseInt(response[1]);
-        int msCounter = Integer.parseInt(response[2]);
+    private void processResponse(String statusCode, int bytes, int msCounter, int slowThreshold) {
+        globalResponseCounter.put(statusCode, globalResponseCounter.getOrDefault(statusCode, 0) + 1);
 
+        this.bytesTotal += bytes;
+        filesBytesTotal += bytes;
 
-
+        if (msCounter > slowThreshold) {
+            fileSlowCalls++;
+            filesTotalSlowCalls++;
+        }
     }
+    //endregion
 }
