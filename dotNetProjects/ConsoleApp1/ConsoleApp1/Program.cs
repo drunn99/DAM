@@ -4,7 +4,13 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            Console.WriteLine("Hola, ¿Cómo te llamas?");
+            string name = Console.ReadLine();
+            DateTime now = DateTime.Now;
+
+            Console.WriteLine($"\nHola {name}. Son las {now:t} del {now:d}");
+
+            Console.ReadKey();
         }
     }
 }

@@ -8,10 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AnalizadorLogs {
-    //Analizar un fichero.
-    //Analizar una línea.
-    //Escribir los resultados siguiendo el protocolo.
-    //Decidir el código de salida.
     public static void main(String[] args) {
         String exitMsg = "Ejecución correcta: se han analizado todos los ficheros recibidos.";
         int exitCode = 0;

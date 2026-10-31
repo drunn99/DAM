@@ -17,7 +17,7 @@ abstract class Tarea(val titulo: String, val prioridad: Prioridad) : Describible
 
 sealed interface Evento {
     data class Creada(val titulo: String) : Evento
-    //data class EnCurso(val titulo: String, val minutosReales: Int) : Evento	
+    //data class EnCurso(val titulo: S		tring, val minutosReales: Int) : Evento	
     data class Completada(val titulo: String, val minutosReales: Int) : Evento	
     object ListaVaciada : Evento
 }
