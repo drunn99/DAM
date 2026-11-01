@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="titulo_principal">"Daniel Nunez DAM Visualizer "</string>
+    <string name="descripcion_principal">Query a module data from the course or visit the school webpage.</string>
+    <string name="boton_detalle">See module details</string>
+    <string name="boton_web">Open school webpage</string>
+    <string name="titulo_detalle">Module Details</string>
+    <string name="modulo_pmdm">Multimedia and Mobile Device Programming</string>
+    <string name="sin_datos">No data received</string>
+    <string name="boton_volver">Go back</string>
+    <string name="horas_semanales">%1$d weekly hours</string>
+    <string name="compartir">Share</string>
+    <string name="compartirPMDM">Shared: Multimedia and Mobile Device Programming</string>
+    <string name="compartirTitulo">Sharing Title</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VisorDam</string>
+    <string name="titulo_principal">"Daniel Nunez DAM Visualizer "</string>
+    <string name="descripcion_principal">Query a course module data or visit the school webpage.</string>
+    <string name="boton_detalle">See module details</string>
+    <string name="boton_web">Open school webpage</string>
+    <string name="titulo_detalle">Module Details</string>
+    <string name="modulo_pmdm">Multimedia and Mobile Devices Programming</string>
+    <string name="sin_datos">No data received</string>
+    <string name="boton_volver">Go back</string>
+</resources>

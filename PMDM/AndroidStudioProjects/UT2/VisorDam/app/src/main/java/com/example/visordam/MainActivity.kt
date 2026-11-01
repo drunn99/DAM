@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
                     PantallaPrincipal(
                         onVerDetalle = { abrirDetalle() },
                         onAbrirWeb = { abrirWebCentro() },
+                        onCompartir = { compartirModulo() },
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -48,8 +49,17 @@ class MainActivity : ComponentActivity() {
     private fun abrirDetalle() {
         val intent = Intent(this, DetalleActivity::class.java)
         intent.putExtra(EXTRA_MODULO, getString(R.string.modulo_pmdm))
+        intent.putExtra(EXTRA_HORAS, 6)
         startActivity(intent)
     }
+
+    private fun compartirModulo() {
+        val share = Intent(Intent.ACTION_SEND)
+        share.type = "text/plain"
+        share.putExtra(Intent.EXTRA_TEXT, resources.getString(R.string.compartirPMDM))
+        startActivity(Intent.createChooser(share, resources.getString(R.string.compartirTitulo)))
+    }
+
 
     private fun abrirWebCentro() {
         val web = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.fpsantacatalina.com"))
@@ -86,11 +96,11 @@ class MainActivity : ComponentActivity() {
         Log.d(TAG, "onDestroy")
     }
 }
-
 @Composable
 fun PantallaPrincipal(
     onVerDetalle: () -> Unit,
     onAbrirWeb: () -> Unit,
+    onCompartir: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -108,6 +118,10 @@ fun PantallaPrincipal(
         Button(onClick = onAbrirWeb) {
             Text(text = stringResource(R.string.boton_web))
         }
+        Button(onClick = onCompartir) {
+            Text(text = stringResource(R.string.compartir))
+        }
+
     }
 }
 
@@ -115,6 +129,8 @@ fun PantallaPrincipal(
 @Composable
 fun PantallaPrincipalPreview() {
     VisorDamTheme {
-        PantallaPrincipal(onVerDetalle = {}, onAbrirWeb = {})
+        PantallaPrincipal(onVerDetalle = {}, onAbrirWeb = {}, onCompartir = {})
     }
 }
+
+

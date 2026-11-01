@@ -22,6 +22,7 @@ import com.example.visordam.ui.theme.VisorDamTheme
 // VisorDam · UT2 Práctica 2 · Aplicación de partida (no modificar este comentario)
 
 const val EXTRA_MODULO = "extra_modulo"
+const val EXTRA_HORAS = "extra_horas"
 
 private const val TAG = "VisorDetalle"
 
@@ -31,12 +32,14 @@ class DetalleActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
         val modulo = intent.getStringExtra(EXTRA_MODULO) ?: getString(R.string.sin_datos)
+        val extraHoras = intent.getIntExtra(EXTRA_HORAS, 0)
         enableEdgeToEdge()
         setContent {
             VisorDamTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     PantallaDetalle(
                         modulo = modulo,
+                        horas = extraHoras,
                         onVolver = { finish() },
                         modifier = Modifier.padding(innerPadding)
                     )
@@ -79,6 +82,7 @@ class DetalleActivity : ComponentActivity() {
 @Composable
 fun PantallaDetalle(
     modulo: String,
+    horas: Int,
     onVolver: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -91,6 +95,7 @@ fun PantallaDetalle(
             style = MaterialTheme.typography.headlineSmall
         )
         Text(text = modulo)
+        Text(stringResource(R.string.horas_semanales, horas))
         Button(onClick = onVolver) {
             Text(text = stringResource(R.string.boton_volver))
         }
